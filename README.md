@@ -10,18 +10,18 @@ heroku buildpacks:add https://github.com/devsenexx/heroku-db-backup-s3 --app <yo
 
 ### Configure environment variables
 ```
+
+
 heroku config:add AWS_ACCESS_KEY_ID=someaccesskey --app <your_app>
 heroku config:add AWS_SECRET_ACCESS_KEY=supermegasecret --app <your_app>
-heroku config:add AWS_DEFAULT_REGION=eu-central-1 --app <your_app>
-heroku config:add S3_BUCKET_PATH=your-bucket --app <your_app>
-heroku config:add S3_BUCKET_PATH=your-bucket --app <your_app>
+heroku config:add S3_DB_BACKUP_BUCKET_PATH=your-bucket --app <your_app>
+heroku config:add AWS_DEFAULT_REGION=your-default-region --app <your_app>
+
+
+S3_ACCESS_KEY can be used instead of AWS_ACCESS_KEY_ID
+S3_SECRET can be used instead of AWS_SECRET_ACCESS_KEY
 ```
-- In future release (maybe) will use heroku-toolbelt
-```
-heroku config:add HEROKU_TOOLBELT_APP=<your_app> --app <your_app>
-heroku config:add HEROKU_TOOLBELT_API_EMAIL=sss --app <your_app>
-heroku config:add HEROKU_TOOLBELT_API_PASSWORD=ddd --app <your_app>
-```
+
 Go to settings page of your Heroku application and add Config Var `DBURL_FOR_BACKUP` with the same value as var `DATABASE_URL`. This is our DB connection string.
 
 ### Scheduler

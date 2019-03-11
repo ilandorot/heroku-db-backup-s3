@@ -49,6 +49,10 @@ if [[ -z "$AWS_SECRET_ACCESS_KEY" ]]; then
   echo "Missing AWS_SECRET_ACCESS_KEY variable"
   exit 1
 fi
+if [[ -z "$AWS_DEFAULT_REGION" ]]; then
+  echo "Missing AWS_DEFAULT_REGION variable"
+  exit 1
+fi
 if [[ -z "$S3_DB_BACKUP_BUCKET_PATH" ]]; then
   echo "Missing S3_DB_BACKUP_BUCKET_PATH variable"
   exit 1
