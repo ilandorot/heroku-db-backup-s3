@@ -26,28 +26,27 @@ esac
 shift
 done
 
-
-if [[ ! -z "$S3_ACCESS_KEY" ]]; then
-  AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY
-fi
-
-if [[ ! -z "$S3_SECRET" ]]; then
-  AWS_SECRET_ACCESS_KEY=$S3_SECRET
-  echo 'AWS_SECRET_ACCESS_KEY exists'
-  echo $AWS_SECRET_ACCESS_KEY
-fi
-
 if [[ -z "$DBNAME" ]]; then
   echo "Missing DBNAME variable"
   exit 1
 fi
+
 if [[ -z "$AWS_ACCESS_KEY_ID" ]]; then
-  echo "Missing AWS_ACCESS_KEY_ID variable"
-  exit 1
+  if [[ ! -z "$S3_ACCESS_KEY" ]]; then
+    export AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY
+  else
+    echo "Missing AWS_ACCESS_KEY_ID variable"
+    exit 1
+  fi
 fi
+
 if [[ -z "$AWS_SECRET_ACCESS_KEY" ]]; then
-  echo "Missing AWS_SECRET_ACCESS_KEY variable"
-  exit 1
+  if [[ ! -z "$S3_SECRET" ]]; then
+    export AWS_SECRET_ACCESS_KEY=$S3_SECRET
+  else
+    echo "Missing AWS_SECRET_ACCESS_KEY variable"
+    exit 1
+  fi
 fi
 if [[ -z "$AWS_DEFAULT_REGION" ]]; then
   echo "Missing AWS_DEFAULT_REGION variable"
