@@ -75,8 +75,7 @@ GZIP_DUMP_FILE_PATH=/tmp/$GZIP_DUMP_FILE
 GPG_DUMP_FILE_PATH=/tmp/$GPG_DUMP_FILE
 
 time pg_dump $DATABASE_URL | gzip >  $GZIP_DUMP_FILE_PATH
-#EXPIRATION_DATE=$(date -v +"2d" +"%Y-%m-%dT%H:%M:%SZ") #for MAC
-# EXPIRATION_DATE=$(date -d "$EXPIRATION days" +"%Y-%m-%dT%H:%M:%SZ")
+EXPIRATION_DATE=$(date -d "$EXPIRATION days" +"%Y-%m-%dT%H:%M:%SZ")
 
 printf "${Green}Move dump to AWS${EC}"
 
