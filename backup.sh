@@ -68,25 +68,22 @@ if [[ -z "$GPG_SECRET" ]]; then
 fi
 
 printf "${Green}Start dump${EC}"
-# Maybe in next 'version' use heroku-toolbelt
-# /app/vendor/heroku-toolbelt/bin/heroku pg:backups capture $DATABASE --app $HEROKU_TOOLBELT_APP
-# BACKUP_URL=`/app/vendor/heroku-toolbelt/bin/heroku pg:backups:public-url --app $HEROKU_TOOLBELT_APP | cat`
-# curl --progress-bar -o /tmp/"${DBNAME}_${FILENAME}" $BACKUP_URL
-# gzip /tmp/"${DBNAME}_${FILENAME}"
 
-GZIP_DUMP_FILE=/tmp/"${DBNAME}_${FILENAME}".gz
+GZIP_DUMP_FILE="${DBNAME}_${FILENAME}".gz
 GPG_DUMP_FILE=$GZIP_DUMP_FILE.gpg
+GZIP_DUMP_FILE_PATH=/tmp/$GZIP_DUMP_FILE
+GPG_DUMP_FILE_PATH=/tmp/$GPG_DUMP_FILE
 
-time pg_dump $DATABASE_URL | gzip >  $GZIP_DUMP_FILE
+time pg_dump $DATABASE_URL | gzip >  $GZIP_DUMP_FILE_PATH
 #EXPIRATION_DATE=$(date -v +"2d" +"%Y-%m-%dT%H:%M:%SZ") #for MAC
-EXPIRATION_DATE=$(date -d "$EXPIRATION days" +"%Y-%m-%dT%H:%M:%SZ")
+# EXPIRATION_DATE=$(date -d "$EXPIRATION days" +"%Y-%m-%dT%H:%M:%SZ")
 
 printf "${Green}Move dump to AWS${EC}"
 
-time gpg --cipher-algo aes256 --output $GPG_DUMP_FILE --passphrase $GPG_SECRET --batch --yes --no-use-agent --symmetric $GZIP_DUMP_FILE
+time gpg --cipher-algo aes256 --output $GPG_DUMP_FILE_PATH --passphrase $GPG_SECRET --batch --yes --no-use-agent --symmetric $GZIP_DUMP_FILE_PATH
 
-time /app/vendor/awscli/bin/aws s3 cp $GPG_DUMP_FILE s3://$S3_DB_BACKUP_BUCKET_PATH/$DBNAME/"${GPG_DUMP_FILE}" --expires $EXPIRATION_DATE
+time /app/vendor/awscli/bin/aws s3 cp $GPG_DUMP_FILE_PATH s3://$S3_DB_BACKUP_BUCKET_PATH/$DBNAME/$GPG_DUMP_FILE --expires $EXPIRATION_DATE
 
 # cleaning after all
-rm $GZIP_DUMP_FILE
-rm $GPG_DUMP_FILE
+rm $GPG_DUMP_FILE_PATH
+rm $GZIP_DUMP_FILE_PATH
