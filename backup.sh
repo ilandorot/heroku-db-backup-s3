@@ -5,6 +5,7 @@ EXPIRATION="30"
 Green='\033[0;32m'
 EC='\033[0m' 
 FILENAME=`date +%H_%M_%d%m%Y`
+STORAGE_CLASS=STANDARD_IA
 
 # terminate script on any fails
 set -e
@@ -67,6 +68,10 @@ if [[ -z "$GPG_SECRET" ]]; then
   exit 1
 fi
 
+if [[ ! -z "$S3_DB_BACKUP_STORAGE_CLASS" ]]; then
+  export STORAGE_CLASS=$S3_DB_BACKUP_STORAGE_CLASS
+fi
+
 printf "${Green}Start dump${EC}"
 
 GZIP_DUMP_FILE="${DBNAME}_${FILENAME}".gz
@@ -81,7 +86,7 @@ printf "${Green}Move dump to AWS${EC}"
 
 time gpg --cipher-algo aes256 --output $GPG_DUMP_FILE_PATH --passphrase $GPG_SECRET --batch --yes --no-use-agent --symmetric $GZIP_DUMP_FILE_PATH
 
-time /app/vendor/awscli/bin/aws s3 cp $GPG_DUMP_FILE_PATH s3://$S3_DB_BACKUP_BUCKET_PATH/$DBNAME/$GPG_DUMP_FILE --expires $EXPIRATION_DATE
+time /app/vendor/awscli/bin/aws s3 cp $GPG_DUMP_FILE_PATH s3://$S3_DB_BACKUP_BUCKET_PATH/$DBNAME/$GPG_DUMP_FILE --expires $EXPIRATION_DATE --storage-class $STORAGE_CLASS
 
 # cleaning after all
 rm $GPG_DUMP_FILE_PATH
