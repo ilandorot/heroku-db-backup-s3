@@ -41,8 +41,25 @@ and configure FREQUENCY. Paramenter `db` is used for naming convention when we c
 
 ### Retrive the db
 Download db file from s3 bucket
+run this on the downloaded file
+```
 gpg --decrypt --output ./aero-plan-prod.gz --passphrase  --batch --yes  ~/Downloads/aero-plan-prod_00_01_23042019.gz.gpg
+```
+Add the passphrase when requested
+
+unzip the file
+```
 gunzip ./aero-plan-prod.gz
+```
+
+### HOW TO UPDATE THE BUILD PACK
+when you deploy heroku take the build pack from the buildpack url like
+https://github.com/ilandorot/heroku-db-backup-s3.git 
+
+if you need you can remove it and than add it again
+heroku buildpacks:remove https://github.com/ilandorot/heroku-db-backup-s3.git --app aero-plan-admin
+heroku buildpacks:add https://github.com/ilandorot/heroku-db-backup-s3.git --app aero-plan-admin
+
 
 ### Doesn't work?
 In case if scheduler doesn't run your task, check logs using this e.g.:
